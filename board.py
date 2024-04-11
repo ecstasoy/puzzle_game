@@ -54,11 +54,11 @@ class Board:
 
     def draw(self):
         start_x, start_y = self.start_pos()
-        for i in range(self.num_tiles):
-            for j in range(self.num_tiles):
-                x = start_x + j * self.tile_size
-                y = start_y - i * self.tile_size
-                self.tiles[i][j].draw(x, y)
+        for row in self.tiles:
+            for tile in row:
+                x = start_x + tile.curr_position[1] * self.tile_size
+                y = start_y - tile.curr_position[0] * self.tile_size
+                tile.draw(x, y)
         turtle.update()
 
     def load_puzzle(self):
@@ -101,9 +101,9 @@ class Board:
         tiles_lst = [tile for row in self.tiles for tile in row]
         random.shuffle(tiles_lst)
         self.tiles = [tiles_lst[i:i + self.num_tiles] for i in range(0, len(tiles_lst), self.num_tiles)]
-        for i in range(self.num_tiles):
-            for j in range(self.num_tiles):
-                self.tiles[i][j].curr_position = (i + 1, j + 1)
+        for row in self.tiles:
+            for tile in row:
+                tile.curr_position = (tile.curr_position[0] + 1, tile.curr_position[1] + 1)
         self.empty_tile_position = self.find_empty_tile_position()
 
     def get_legal_moves(self):
@@ -181,27 +181,27 @@ class Board:
         return inversions
 
     def is_solved(self):
-        for i in range(self.num_tiles):
-            for j in range(self.num_tiles):
-                if (i, j) == self.empty_tile_position:
+        for row in self.tiles:
+            for tile in row:
+                if tile.curr_position == self.empty_tile_position:
                     continue
-                if self.tiles[i][j].init_position != (i, j):
+                if tile.init_position != tile.curr_position:
                     return False
         return True
 
     def find_empty_tile_position(self):
-        for i in range(self.num_tiles):
-            for j in range(self.num_tiles):
-                if self.tiles[i][j].init_position == (self.num_tiles - 1, self.num_tiles - 1):
-                    return i, j
+        for row in self.tiles:
+            for tile in row:
+                if tile.init_position == (self.num_tiles - 1, self.num_tiles - 1):
+                    return tile.curr_position
 
     def clear_board(self):
-        for i in range(self.num_tiles):
-            for j in range(self.num_tiles):
-                self.tiles[i][j].turtle.ht()
-                self.tiles[i][j].turtle = None
+        for row in self.tiles:
+            for tile in row:
+                tile.turtle.ht()
+                tile.turtle = None
 
     def release_click(self):
-        for i in range(self.num_tiles):
-            for j in range(self.num_tiles):
-                self.tiles[i][j].turtle.onclick(None)
+        for row in self.tiles:
+            for tile in row:
+                tile.turtle.onclick(None)

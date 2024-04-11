@@ -43,8 +43,7 @@ class GameUI:
         self.ui_callbacks[event_type]()
 
     def show_splash_screen(self):
-        splash_screen_image = "Resources/splash_screen.gif"
-        self.screen.bgpic(splash_screen_image)
+        self.screen.bgpic(constants.SPLASH_SCREEN_PATH)
         self.screen.ontimer(self.startup, 3000)
 
     def clear_splash_screen(self):
@@ -52,13 +51,14 @@ class GameUI:
 
     def show_player_info(self):
         self.player_input = turtle.textinput('CS5001 Puzzle Slide', 'Your Name:')
-        if self.player_input == '':
+        if self.player_input == '' or self.player_input is None:
             self.player_input = 'Anonymous'
         self.notify_ui_callback('players_name')
 
     def show_moves_info(self):
-        self.moves_input = int(turtle.numinput('CS5001 Puzzle Slide', 'Enter the number of moves you want (5-200):',
-                                               50, minval=5, maxval=200))
+        self.moves_input = turtle.numinput('CS5001 Puzzle Slide', 'Enter the number of moves you want (5-200):',
+                                           50, minval=5, maxval=200)
+        self.moves_input = 50 if self.moves_input is None else int(self.moves_input)
         self.notify_ui_callback('moves_left')
 
     def startup(self):
@@ -98,21 +98,18 @@ class GameUI:
 
     def set_button(self):
         self.reset_button.goto(50, -275)
-        reset_button_image = "Resources/resetbutton.gif"
-        self.screen.register_shape(reset_button_image)
-        self.reset_button.shape(reset_button_image)
+        self.screen.register_shape(constants.RESET_BUTTON_PATH)
+        self.reset_button.shape(constants.RESET_BUTTON_PATH)
         self.reset_button.onclick(self.board.reset)
 
         self.load_button.goto(150, -275)
-        load_button_image = "Resources/loadbutton.gif"
-        self.screen.register_shape(load_button_image)
-        self.load_button.shape(load_button_image)
+        self.screen.register_shape(constants.LOAD_BUTTON_PATH)
+        self.load_button.shape(constants.LOAD_BUTTON_PATH)
         self.load_button.onclick(self.board.load_new_puzzle)
 
         self.quit_button.goto(250, -275)
-        quit_button_image = "Resources/quitbutton.gif"
-        self.screen.register_shape(quit_button_image)
-        self.quit_button.shape(quit_button_image)
+        self.screen.register_shape(constants.QUIT_BUTTON_PATH)
+        self.quit_button.shape(constants.QUIT_BUTTON_PATH)
         self.quit_button.onclick(self.quit_game)
 
         turtle.update()
@@ -169,8 +166,8 @@ class GameUI:
         self.text.goto(-300, -345)
         self.text.ht()
         self.text.write(f"Current player: {self.player_input}\nPlayer's moves: {moves}\n"
-                        f"Moves left: {moves_left}\nIs it solvable? {self.board.solvable}"
-                        , font=("Helvetica", 30, "bold"))
+                        f"Moves left: {moves_left}\nIs it solvable? {self.board.solvable}",
+                        font=("Helvetica", 30, "bold"))
 
     def write_leaderboard(self):
         self.leaderboard_text.goto(150, -185)
@@ -184,9 +181,8 @@ class GameUI:
             error_turtle.penup()
             error_turtle.goto(225, 180)
             error_turtle.pendown()
-            error_image = 'Resources/leaderboard_error.gif'
-            self.screen.register_shape(error_image)
-            error_turtle.shape(error_image)
+            self.screen.register_shape(constants.LEADERBOARD_ERROR_PATH)
+            error_turtle.shape(constants.LEADERBOARD_ERROR_PATH)
             turtle.update()
 
             def hide_shape():
@@ -196,13 +192,9 @@ class GameUI:
             self.screen.ontimer(hide_shape, 3000)
 
     def show_max_puzzle_error(self):
-        max_error_turtle = turtle.Turtle()
-        max_error_turtle.penup()
-        max_error_turtle.goto(0, 250)
-        max_error_turtle.pendown()
-        max_error_image = 'Resources/file_warning.gif'
-        self.screen.register_shape(max_error_image)
-        max_error_turtle.shape(max_error_image)
+        max_error_turtle = create_custom_turtle()
+        self.screen.register_shape(constants.MAX_PUZZLE_PATH)
+        max_error_turtle.shape(constants.MAX_PUZZLE_PATH)
         turtle.update()
 
         def hide_shape():
@@ -213,13 +205,9 @@ class GameUI:
         self.screen.ontimer(hide_shape, 2000)
 
     def show_no_puzzle_error(self):
-        no_error_turtle = turtle.Turtle()
-        no_error_turtle.penup()
-        no_error_turtle.goto(0, 0)
-        no_error_turtle.pendown()
-        no_error_image = 'Resources/file_error.gif'
-        self.screen.register_shape(no_error_image)
-        no_error_turtle.shape(no_error_image)
+        no_error_turtle = create_custom_turtle()
+        self.screen.register_shape(constants.NO_FILE_PATH)
+        no_error_turtle.shape(constants.NO_FILE_PATH)
         turtle.update()
 
         def hide_shape():
@@ -237,48 +225,32 @@ class GameUI:
 
     def quit_game(self, x, y):
         self.release_click()
-        bye_turtle = turtle.Turtle()
-        bye_turtle.penup()
-        bye_turtle.goto(0, 0)
-        bye_turtle.pendown()
-        exit_image = "Resources/quitmsg.gif"
-        self.screen.register_shape(exit_image)
-        bye_turtle.shape(exit_image)
+        bye_turtle = create_custom_turtle()
+        self.screen.register_shape(constants.QUIT_MSG_PATH)
+        bye_turtle.shape(constants.QUIT_MSG_PATH)
         turtle.update()
         self.screen.ontimer(self.show_credit, 3000)
 
     def win_game(self, x, y):
         self.release_click()
-        win_turtle = turtle.Turtle()
-        win_turtle.penup()
-        win_turtle.goto(0, 0)
-        win_turtle.pendown()
-        win_image = "Resources/winner.gif"
-        self.screen.register_shape(win_image)
-        win_turtle.shape(win_image)
+        win_turtle = create_custom_turtle()
+        self.screen.register_shape(constants.WIN_MSG_PATH)
+        win_turtle.shape(constants.WIN_MSG_PATH)
         turtle.update()
         self.screen.ontimer(self.show_credit, 3000)
 
     def lose_game(self, x, y):
         self.release_click()
-        lose_turtle = turtle.Turtle()
-        lose_turtle.penup()
-        lose_turtle.goto(0, 0)
-        lose_turtle.pendown()
-        lose_image = "Resources/Lose.gif"
-        self.screen.register_shape(lose_image)
-        lose_turtle.shape(lose_image)
+        lose_turtle = create_custom_turtle()
+        self.screen.register_shape(constants.LOSE_MSG_PATH)
+        lose_turtle.shape(constants.LOSE_MSG_PATH)
         turtle.update()
         self.screen.ontimer(self.show_credit, 3000)
 
     def show_credit(self):
-        credit_turtle = turtle.Turtle()
-        credit_turtle.penup()
-        credit_turtle.goto(0, 0)
-        credit_turtle.pendown()
-        credit_image = "Resources/credits.gif"
-        self.screen.register_shape(credit_image)
-        credit_turtle.shape(credit_image)
+        credit_turtle = create_custom_turtle()
+        self.screen.register_shape(constants.CREDITS_PATH)
+        credit_turtle.shape(constants.CREDITS_PATH)
         turtle.update()
         self.screen.ontimer(turtle.bye, 3000)
 
