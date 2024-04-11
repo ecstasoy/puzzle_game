@@ -13,10 +13,10 @@ class Leaderboard:
         for i in range(0, 10):
             if i < len(self.leaderboard):
                 if len(list(self.leaderboard)[i]) > 8:
-                    player_name = list(self.leaderboard)[i][0:7] + '... '
+                    player_name = list(self.leaderboard)[i][0:8] + '... '
                 else:
                     player_name = list(self.leaderboard)[i]
-                leaderboard_text += f"{i + 1}. {player_name}: {list(self.leaderboard.values())[i]}\n\n"
+                leaderboard_text += f"{player_name}: {list(self.leaderboard.values())[i]}\n\n"
             else:
                 leaderboard_text += "\n\n"
         return leaderboard_text

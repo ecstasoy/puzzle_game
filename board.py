@@ -101,9 +101,9 @@ class Board:
         tiles_lst = [tile for row in self.tiles for tile in row]
         random.shuffle(tiles_lst)
         self.tiles = [tiles_lst[i:i + self.num_tiles] for i in range(0, len(tiles_lst), self.num_tiles)]
-        for row in self.tiles:
-            for tile in row:
-                tile.curr_position = (tile.curr_position[0] + 1, tile.curr_position[1] + 1)
+        for i in range(self.num_tiles):
+            for j in range(self.num_tiles):
+                self.tiles[i][j].curr_position = (i, j)
         self.empty_tile_position = self.find_empty_tile_position()
 
     def get_legal_moves(self):
