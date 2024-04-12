@@ -61,7 +61,7 @@ class FileManager:
                         leaderboard[player] = int(score)
         except FileNotFoundError as e:
             self.log_error(f"Leaderboard file not found - \"{self.leaderboard_path}\" - {e}\n"
-                           f"leaderboard.txt created\n ")
+                           f"leaderboard.txt created ")
             with open(self.leaderboard_path, 'w') as file:
                 file.write("")
 

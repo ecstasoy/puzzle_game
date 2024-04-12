@@ -76,11 +76,12 @@ class Board:
         if new_puzzle == '' or new_puzzle is None:
             return
         elif new_puzzle not in self.puzzle_catalog:
-            self.file_manager.log_error(f"Puzzle file not found - {new_puzzle} ")
+            self.file_manager.log_error(f"Puzzle file not found - \"{new_puzzle}\" ")
             self.notify_move_callback('no_puzzle')
             return
         else:
             if self.file_manager.check_puzzle_config(new_puzzle):
+                self.clear_board()
                 self.file_manager.puzzle_file = new_puzzle
                 self.initialize_puzzle()
                 self.solvable = 'Yes' if self.is_solvable() else 'No'

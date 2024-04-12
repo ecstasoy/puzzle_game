@@ -188,6 +188,7 @@ class GameUI:
             def hide_shape():
                 error_turtle.ht()
                 error_turtle.clear()
+                turtle.update()
 
             self.screen.ontimer(hide_shape, 3000)
 
