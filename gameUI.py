@@ -1,4 +1,5 @@
 import turtle
+import os.path
 import constants
 from board import Board
 from leaderboard import Leaderboard
@@ -35,6 +36,7 @@ class GameUI:
     def init_callback(self):
         self.board.register_move_callback('max_puzzle', self.show_max_puzzle_error)
         self.board.register_move_callback('no_puzzle', self.show_no_puzzle_error)
+        self.board.register_move_callback('redraw_thumbnail', self.draw_thumbnail)
 
     def register_ui_callback(self, event_type, callback):
         self.ui_callbacks[event_type] = callback
@@ -177,10 +179,7 @@ class GameUI:
 
     def show_leaderboard_error(self):
         if self.leaderboard.file_manager.load_leaderboard_file() == {}:
-            error_turtle = turtle.Turtle()
-            error_turtle.penup()
-            error_turtle.goto(225, 180)
-            error_turtle.pendown()
+            error_turtle = create_custom_turtle()
             self.screen.register_shape(constants.LEADERBOARD_ERROR_PATH)
             error_turtle.shape(constants.LEADERBOARD_ERROR_PATH)
             turtle.update()

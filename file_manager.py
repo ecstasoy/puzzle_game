@@ -78,6 +78,25 @@ class FileManager:
             with open(self.leaderboard_path, 'w') as file:
                 file.write(f"\n{player_name},{total_move}")
 
+    def check_puzzle_config(self, file_name):
+        prev = self.puzzle_file
+        self.puzzle_file = file_name
+        puzzle_config = self.load_puzzle_file()
+        if not os.path.isfile(puzzle_config['thumbnail']):
+            self.puzzle_file = prev
+            self.log_error(f"Malformed puzzle file - \"{file_name}\" "
+                           f"Path does not exist - \"{puzzle_config['thumbnail']}\"")
+            return False
+        num_tiles = puzzle_config['number']
+        for i in range(1, num_tiles + 1):
+            image_path = puzzle_config.get(i)
+            if not os.path.isfile(image_path):
+                self.puzzle_file = prev
+                self.log_error(f"Malformed puzzle file - \"{file_name}\" "
+                               f"Path does not exist - \"{image_path}\"")
+                return False
+        return True
+
     def load_puzzle_catalog(self):
         puzzle_catalog = []
         for file in os.listdir():

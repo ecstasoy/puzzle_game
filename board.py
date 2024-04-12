@@ -2,6 +2,7 @@ import random
 import turtle
 import math
 import constants
+import os.path
 from tile import Tile
 from file_manager import FileManager
 
@@ -14,6 +15,7 @@ def tuple_to_linear_index(position, num_tiles):
 class Board:
     def __init__(self, puzzle_file='mario.puz'):
         self.file_manager = FileManager(puzzle_file)
+        self.prev_puzzle_file = None
         self.puzzle_config = None
         self.puzzle_catalog = None
         self.num_tiles = None
@@ -21,13 +23,12 @@ class Board:
         self.tiles = None
         self.empty_tile_position = None
 
-        self.initialize_puzzle_config()
-        self.initialize_tiles()
+        self.initialize_puzzle()
 
         self.solvable = 'Yes' if self.is_solvable() else 'No'
         self.on_move_callbacks = {}
 
-    def initialize_puzzle_config(self):
+    def initialize_puzzle(self):
         self.puzzle_config = self.file_manager.load_puzzle_file()
         self.puzzle_catalog = self.file_manager.load_puzzle_catalog()
         self.num_tiles = int(math.sqrt(self.puzzle_config['number']))
@@ -35,17 +36,13 @@ class Board:
             self.tile_size = 90
         else:
             self.tile_size = self.puzzle_config['size'] + 5
+        self.initialize_tiles()
 
     def initialize_tiles(self):
         self.tiles = [[None for _ in range(self.num_tiles)] for _ in range(self.num_tiles)]
         self.load_puzzle()
         self.empty_tile_position = self.find_empty_tile_position()
         self.real_scramble()
-
-    def restart(self):
-        self.initialize_puzzle_config()
-        self.initialize_tiles()
-        self.solvable = 'Yes' if self.is_solvable() else 'No'
 
     def start_pos(self):
         start_x = constants.BOARD_OFFSET_X - (self.num_tiles / 2 * self.tile_size) + (self.tile_size / 2)
@@ -76,18 +73,23 @@ class Board:
             else:
                 text += self.puzzle_catalog[i] + '\n'
         new_puzzle = turtle.textinput('Load puzzle', text)
-        if new_puzzle == '':
+        if new_puzzle == '' or new_puzzle is None:
             return
         elif new_puzzle not in self.puzzle_catalog:
             self.file_manager.log_error(f"Puzzle file not found - {new_puzzle} ")
             self.notify_move_callback('no_puzzle')
             return
         else:
-            self.clear_board()
-            self.file_manager.puzzle_file = new_puzzle
-            self.restart()
-            self.draw()
-            self.notify_move_callback('reset_moves')
+            if self.file_manager.check_puzzle_config(new_puzzle):
+                self.file_manager.puzzle_file = new_puzzle
+                self.initialize_puzzle()
+                self.solvable = 'Yes' if self.is_solvable() else 'No'
+                self.draw()
+                self.notify_move_callback('redraw_thumbnail')
+                self.notify_move_callback('reset_moves')
+            else:
+                self.notify_move_callback('no_puzzle')
+                return
 
     def reset(self, x, y):
         self.clear_board()
