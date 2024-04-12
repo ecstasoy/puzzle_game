@@ -9,7 +9,6 @@ class Leaderboard:
 
     def leaderboard_text(self):
         leaderboard_text = "Leader:\n\n\n"
-        player_name = ''
         for i in range(0, 10):
             if i < len(self.leaderboard):
                 if len(list(self.leaderboard)[i]) > 8:

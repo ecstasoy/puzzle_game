@@ -2,7 +2,6 @@ import random
 import turtle
 import math
 import constants
-import os.path
 from tile import Tile
 from file_manager import FileManager
 
@@ -49,7 +48,7 @@ class Board:
         start_y = constants.BOARD_OFFSET_Y + (self.num_tiles / 2 * self.tile_size) - (self.tile_size / 2)
         return start_x, start_y
 
-    def draw(self):
+    def draw_all(self):
         start_x, start_y = self.start_pos()
         for row in self.tiles:
             for tile in row:
@@ -85,7 +84,7 @@ class Board:
                 self.file_manager.puzzle_file = new_puzzle
                 self.initialize_puzzle()
                 self.solvable = 'Yes' if self.is_solvable() else 'No'
-                self.draw()
+                self.draw_all()
                 self.notify_move_callback('redraw_thumbnail')
                 self.notify_move_callback('reset_moves')
             else:
@@ -97,7 +96,7 @@ class Board:
         self.load_puzzle()
         self.empty_tile_position = self.find_empty_tile_position()
         self.solvable = 'Yes' if self.is_solvable() else 'No'
-        self.draw()
+        self.draw_all()
         self.notify_move_callback('reset_solvable')
 
     def scramble(self):
@@ -140,20 +139,26 @@ class Board:
         row, col = position
         empty_row, empty_col = self.empty_tile_position
         if abs(row - empty_row) + abs(col - empty_col) == 1:
-            self.tiles[empty_row][empty_col], self.tiles[row][col] = \
-                self.tiles[row][col], self.tiles[empty_row][empty_col]
-            self.tiles[empty_row][empty_col].curr_position = self.empty_tile_position
-            self.tiles[row][col].curr_position = position
+            draw = self.swap(position, self.empty_tile_position)
             self.empty_tile_position = position
-            self.draw()
+            start_x, start_y = self.start_pos()
+            for tile in draw:
+                x = start_x + tile.curr_position[1] * self.tile_size
+                y = start_y - tile.curr_position[0] * self.tile_size
+                tile.draw(x, y)
+            turtle.update()
             self.notify_move_callback('count_move')
             self.notify_move_callback('check_game_over')
 
     def swap(self, prev_pos, next_pos):
+        draw = []
         self.tiles[prev_pos[0]][prev_pos[1]], self.tiles[next_pos[0]][next_pos[1]] = \
             self.tiles[next_pos[0]][next_pos[1]], self.tiles[prev_pos[0]][prev_pos[1]]
         self.tiles[next_pos[0]][next_pos[1]].curr_position = next_pos
         self.tiles[prev_pos[0]][prev_pos[1]].curr_position = prev_pos
+        draw.append(self.tiles[prev_pos[0]][prev_pos[1]])
+        draw.append(self.tiles[next_pos[0]][next_pos[1]])
+        return draw
 
     def register_move_callback(self, event_type, callback):
         self.on_move_callbacks[event_type] = callback

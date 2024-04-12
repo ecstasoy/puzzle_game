@@ -17,6 +17,8 @@ class GameUI:
         self.file_manager = FileManager()
         self.screen = turtle.Screen()
         self.leaderboard = Leaderboard()
+        self.board = Board()
+        self.ui_callbacks = {}
         self.player_input = ""
         self.moves_input = 0
         self.drawing_turtle = None
@@ -26,11 +28,8 @@ class GameUI:
         self.load_button = None
         self.quit_button = None
         self.thumbnail = None
-        self.ui_callbacks = {}
         self.solvable = None
         self.show_splash_screen()
-        self.board = Board()
-        self.init_callback()
 
     def init_callback(self):
         self.board.register_move_callback('max_puzzle', self.show_max_puzzle_error)
@@ -65,8 +64,9 @@ class GameUI:
         self.set_screen()
         self.set_turtle()
         self.set_ui()
-        self.draw_board()
         self.set_button()
+        self.draw_board()
+        self.init_callback()
 
     def set_screen(self):
         self.screen.bgcolor("white")
@@ -156,7 +156,7 @@ class GameUI:
         turtle.update()
 
     def draw_board(self):
-        self.board.draw()
+        self.board.draw_all()
 
     def write_moves(self, moves, moves_left):
         self.text.goto(-300, -345)
