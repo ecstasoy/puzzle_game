@@ -180,6 +180,7 @@ class GameUI:
     def show_leaderboard_error(self):
         if self.leaderboard.file_manager.load_leaderboard_file() == {}:
             error_turtle = create_custom_turtle()
+            error_turtle.goto(225, 200)
             self.screen.register_shape(constants.LEADERBOARD_ERROR_PATH)
             error_turtle.shape(constants.LEADERBOARD_ERROR_PATH)
             turtle.update()
@@ -192,6 +193,7 @@ class GameUI:
 
     def show_max_puzzle_error(self):
         max_error_turtle = create_custom_turtle()
+        max_error_turtle.goto(0, 200)
         self.screen.register_shape(constants.MAX_PUZZLE_PATH)
         max_error_turtle.shape(constants.MAX_PUZZLE_PATH)
         turtle.update()
