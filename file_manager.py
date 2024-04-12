@@ -71,7 +71,7 @@ class FileManager:
     def write_leaderboard_file(self, player_name, total_move):
         try:
             with open(self.leaderboard_path, 'a') as file:
-                file.write(f"\n{player_name},{total_move}")
+                file.write(f"{player_name},{total_move}\n")
         except FileNotFoundError as e:
             self.log_error(f"Leaderboard file not found - \"{self.leaderboard_path}\" - {e}\n"
                            f"leaderboard.txt created\n ")

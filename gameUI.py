@@ -1,5 +1,4 @@
 import turtle
-import os.path
 import constants
 from board import Board
 from leaderboard import Leaderboard
@@ -14,12 +13,12 @@ def create_custom_turtle():
 
 class GameUI:
     def __init__(self):
+        turtle.tracer(0)
         self.file_manager = FileManager()
         self.screen = turtle.Screen()
         self.leaderboard = Leaderboard()
         self.player_input = ""
         self.moves_input = 0
-        turtle.tracer(0)
         self.drawing_turtle = None
         self.text = None
         self.leaderboard_text = None
@@ -46,10 +45,7 @@ class GameUI:
 
     def show_splash_screen(self):
         self.screen.bgpic(constants.SPLASH_SCREEN_PATH)
-        self.screen.ontimer(self.startup, 3000)
-
-    def clear_splash_screen(self):
-        self.screen.bgpic("nopic")
+        self.screen.ontimer(self.check_leaderboard_error, 3000)
 
     def show_player_info(self):
         self.player_input = turtle.textinput('CS5001 Puzzle Slide', 'Your Name:')
@@ -64,7 +60,6 @@ class GameUI:
         self.notify_ui_callback('moves_left')
 
     def startup(self):
-        self.clear_splash_screen()
         self.show_player_info()
         self.show_moves_info()
         self.set_screen()
@@ -95,7 +90,6 @@ class GameUI:
         self.draw_leaderboard_area()
         self.draw_thumbnail()
         self.write_moves(0, self.moves_input)
-        self.show_leaderboard_error()
         self.write_leaderboard()
 
     def set_button(self):
@@ -177,10 +171,10 @@ class GameUI:
         self.leaderboard_text.color('blue')
         self.leaderboard_text.write(self.leaderboard.leaderboard_text(), font=("Helvetica", 19, "bold"))
 
-    def show_leaderboard_error(self):
+    def check_leaderboard_error(self):
+        self.screen.bgpic("nopic")
         if self.leaderboard.file_manager.load_leaderboard_file() == {}:
             error_turtle = create_custom_turtle()
-            error_turtle.goto(225, 200)
             self.screen.register_shape(constants.LEADERBOARD_ERROR_PATH)
             error_turtle.shape(constants.LEADERBOARD_ERROR_PATH)
             turtle.update()
@@ -189,8 +183,11 @@ class GameUI:
                 error_turtle.ht()
                 error_turtle.clear()
                 turtle.update()
+                self.startup()
 
             self.screen.ontimer(hide_shape, 3000)
+        else:
+            self.startup()
 
     def show_max_puzzle_error(self):
         max_error_turtle = create_custom_turtle()
