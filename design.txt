@@ -1,0 +1,42 @@
+Design description for Puzzle Game
+CS5001 final project
+Kunhua Huang
+002836817
+-------------------------------
+
+File structure:
+├── Images
+│         ├── (puzzle name)
+│         │         └──xxx.gif
+│
+├── Resources
+│         └── xxx.gif
+├── board.py
+├── constants.py
+├── file_manager.py
+├── game.py
+├── gameUI.py
+├── leaderboard.py
+├── puzzle_game.py
+├── test_module.py
+├── tile.py
+├── design.txt
+├── leaderboard.txt
+├── 5001_puzzle.err
+└── xxx.puz
+
+All files in the directory reflects a comprehensive design of a puzzle game program. The program, which will be entered
+through puzzle_game.py, is a (semi? I am not so sure :) ) adaptation of Model-Controller-View architectural pattern.
+
+Model: FileManager class manages all data-related operations and is needed by almost all other classes. In order to
+ensure the class only have one instance throughout the execution of the program, Singleton Design Pattern is implemented.
+Tile class represents a tile in the entire board, with storage of its location and drawing method using turtle package.
+
+View: GameUI class provides most visual elements in the game. It initializes the game screen, handles user inputs
+through dialogs, and updates the display (e.g., tiles, buttons, leaderboard).
+
+Controller: Board class contains the logic of how the tiles are arranged, the rules of moving the blank tiles, and the
+control of interaction between different classes. When user make a move, the callback function will notify Game and
+GameUI to update the game status and corresponding display. Game class coordinates interactions between the UI and
+the model.
+

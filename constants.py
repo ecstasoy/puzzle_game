@@ -1,3 +1,7 @@
+"""
+Constants for the game
+"""
+
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 800
 BOARD_HEIGHT = 500
