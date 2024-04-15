@@ -24,8 +24,10 @@ class Leaderboard:
         :return: returns the leaderboard text.
         """
         leaderboard_text = "Leader:\n\n\n"
+        # Display the top 10 players in the leaderboard
         for i in range(0, 10):
             if i < len(self.leaderboard):
+                # Truncate the player name if it is longer than 8 characters
                 if len(list(self.leaderboard)[i]) > 8:
                     player_name = list(self.leaderboard)[i][0:8] + '... '
                 else:
