@@ -126,7 +126,7 @@ class FileManager:
         if not os.path.isfile(puzzle_config['thumbnail']):
             self.puzzle_file = prev
             self.log_error(f"Malformed puzzle file - \"{file_name}\" "
-                           f"Path does not exist - \"{puzzle_config['thumbnail']}\"")
+                           f"Path does not exist - \"{puzzle_config['thumbnail']}\" ")
             return False
         num_tiles = puzzle_config['number']
         for i in range(1, num_tiles + 1):
@@ -134,7 +134,7 @@ class FileManager:
             if not os.path.isfile(image_path):
                 self.puzzle_file = prev
                 self.log_error(f"Malformed puzzle file - \"{file_name}\" "
-                               f"Path does not exist - \"{image_path}\"")
+                               f"Path does not exist - \"{image_path}\" ")
                 return False
         return True
 
