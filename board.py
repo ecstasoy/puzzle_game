@@ -220,15 +220,9 @@ class Board:
         moves = random.randint(5, 200)  # Randomly choose the number of moves
         for _ in range(moves):
             legal_moves = random.choice(self.get_legal_moves())  # Randomly choose a legal move from the list
-            empty_row = self.empty_tile_position[0]
-            empty_col = self.empty_tile_position[1]
-            new_row = legal_moves[0]
-            new_col = legal_moves[1]
-            self.tiles[new_row][new_col], self.tiles[empty_row][empty_col] =\
-                self.tiles[empty_row][empty_col], self.tiles[new_row][new_col]
-            self.tiles[new_row][new_col].curr_position = (new_row, new_col)
-            self.tiles[empty_row][empty_col].curr_position = self.empty_tile_position
-            self.empty_tile_position = self.find_empty_tile_position()
+            # Swap the tiles but not display them yet, to prevent flickering
+            self.swap(legal_moves, self.empty_tile_position)
+            self.empty_tile_position = legal_moves
 
     def move_puzzle(self, position):
         """
@@ -239,7 +233,7 @@ class Board:
         row, col = position
         empty_row, empty_col = self.empty_tile_position
         if abs(row - empty_row) + abs(col - empty_col) == 1:
-            draw = self.swap(position, self.empty_tile_position)  # Swap the tiles
+            draw = self.swap(position, self.empty_tile_position)  # Swap the tiles and draw the two tiles only
             self.empty_tile_position = position
             start_x, start_y = self.start_pos()
             for tile in draw:
@@ -247,12 +241,13 @@ class Board:
                 y = start_y - tile.curr_position[0] * self.tile_size
                 tile.draw(x, y)
             turtle.update()
+            # Notify the callback functions
             self.notify_move_callback('count_move')
             self.notify_move_callback('check_game_over')
 
     def swap(self, prev_pos, next_pos):
         """
-        Swap the tiles of the puzzle.
+        Swap the tiles of the puzzle. Also used for testing (test_module.py).
         :param prev_pos: previous position of the tile
         :param next_pos: next position of the tile
         :return: a list of tiles to draw
@@ -266,10 +261,38 @@ class Board:
         draw.append(self.tiles[next_pos[0]][next_pos[1]])
         return draw
 
+    def calculate_inversions(self):
+        """
+        Calculate the number of inversions in the puzzle
+        :return: inversions
+        """
+        """
+        A inversion refers to a pair of tiles (a, b) where a appears before b but a > b.
+        The number of inversions is used to determine if the puzzle is solvable.
+        """
+        inversions = 0
+        # Flatten the 2D list of tiles
+        tiles_lst = [tile for row in self.tiles for tile in row]
+        # Calculate the number of inversions by arranging them in linear positions (excluding the empty tile)
+        linear_positions = [tuple_to_linear_index(tile.init_position, self.num_tiles)
+                            for tile in tiles_lst if tile.init_position != (self.num_tiles - 1, self.num_tiles - 1)]
+        print(linear_positions)
+        for i in range(len(linear_positions)):
+            for j in range(i + 1, len(linear_positions)):
+                if linear_positions[i] > linear_positions[j]:
+                    inversions += 1
+        return inversions
+
     def is_solvable(self):
         """
         Check if the puzzle is solvable
         :return: yes if solvable, no otherwise
+        """
+        """
+        For puzzles with odd number of tiles, the puzzle is solvable if the number of inversions is even.
+        For puzzles with even number of tiles, the puzzle is solvable:
+            1. if the number of inversions is even and the row number of the empty tile counted from the bottom is odd.
+            2. if the number of inversions is odd and the row number of the empty tile counted from the bottom is even.
         """
         inversions = self.calculate_inversions()
         if self.num_tiles % 2 != 0:
@@ -280,21 +303,6 @@ class Board:
                 return inversions % 2 != 0
             else:
                 return inversions % 2 == 0
-
-    def calculate_inversions(self):
-        """
-        Calculate the number of inversions in the puzzle
-        :return: inversions
-        """
-        inversions = 0
-        tiles_lst = [tile for row in self.tiles for tile in row]
-        linear_positions = [tuple_to_linear_index(tile.init_position, self.num_tiles)
-                            for tile in tiles_lst if tile.init_position != (self.num_tiles - 1, self.num_tiles - 1)]
-        for i in range(len(linear_positions)):
-            for j in range(i + 1, len(linear_positions)):
-                if linear_positions[i] > linear_positions[j]:
-                    inversions += 1
-        return inversions
 
     def is_solved(self):
         """

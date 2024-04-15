@@ -40,3 +40,16 @@ control of interaction between different classes. When user make a move, the cal
 GameUI to update the game status and corresponding display. Game class coordinates interactions between the UI and
 the model.
 
+All the constants are stored in constants.py, including the screen size, tile size, the number of tiles in a row, and
+the path of the image file. The leaderboard is stored in leaderboard.txt, which is a text file that stores all the
+information of the players and their scores. The file is read and written by the Leaderboard class.
+
+BONUS POINTS:
+1. Board.is_solvable() method is implemented to check if the puzzle is solvable. The method is called in the Board class
+when the puzzle is initialized. This status will be displayed in the game screen ui.
+2. Board.scramble() method is initially implemented to shuffle the tiles and the solvability of the puzzle is not
+guaranteed. If we change the real_scramble() in initialize_tiles() (Line 93) to scramble(), we may notice the status
+changed to 'No' when a new puzzle is loaded (can take several times to see the change).
+3. A PyUnit test is included in test_module.py to test the is_solvable() method in the Board class.
+4. Board.real_scramble() method is implemented to shuffle the tiles and guarantee the solvability of the puzzle.
+A PyUnit test is also included in test_module.py.
