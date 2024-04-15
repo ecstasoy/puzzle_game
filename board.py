@@ -276,7 +276,6 @@ class Board:
         # Calculate the number of inversions by arranging them in linear positions (excluding the empty tile)
         linear_positions = [tuple_to_linear_index(tile.init_position, self.num_tiles)
                             for tile in tiles_lst if tile.init_position != (self.num_tiles - 1, self.num_tiles - 1)]
-        print(linear_positions)
         for i in range(len(linear_positions)):
             for j in range(i + 1, len(linear_positions)):
                 if linear_positions[i] > linear_positions[j]:
